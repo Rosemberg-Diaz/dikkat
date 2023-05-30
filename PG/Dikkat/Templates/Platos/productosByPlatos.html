@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load bootstrap_icons %}
+<section id="gtco-welcome" class="bg-white section-padding">
+    <div class="container">
+        <div class="section-content">
+            <div class="row">
+            <div class="col-sm-9">
+                <h2>
+                    {{plato}}
+                </h2>
+                <h1>
+                    {{error}}
+                </h1>
+            </div>
+            <div class="col-sm-2">
+                <a type="button" class="btn btn-default" href="{% url 'menu' user.restaurante %}">Ver menu {% bs_icon 'clipboard'%}</a>
+            </div><br><br></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5 d-flex shadow align-items-center justify-content-center">
+                        <div class="col-md-5 menu-wrap">
+                            {% for inv in inventario %}
+                            <div class="text-wrap">
+                            <div class="row align-items-start">
+                                <div class="col-8">
+                                    <h4>{{inv.producto}}</h4>
+                                </div>
+                                <div class="col-4">
+                                    <div class="col-6">
+                                        <h4 class="text-muted menu-price">{{inv.cantidadGastada}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                </div>
+                <div class="col-sm-7 py-5 pl-md-0 pl-4">
+                    <div class="heading-section pl-lg-5 ml-md-5">
+                        <span class="subheading">
+
+                        </span>
+                        <h2>
+                            Añadir producto
+                        </h2>
+                    </div>
+                    <div class="pl-lg-5 ml-md-5">
+                        {% if productos == 0 %}
+                            <h2>No hay productos aun, por favor añadalos para continuar.</h2>
+                        {% else %}
+                        <form method="POST" enctype="multipart/form-data">
+							{% csrf_token %}
+                            <p class="form-group">
+                                <label for="producto">Productos:</label>
+                                <select name="producto" id="producto">
+                                    <option value="">Seleccionar tipo</option>
+                                    {% for pro in productos %}
+                                    <option value="{{pro.nombre}}">{{pro}}</option>
+                                    {% endfor %}
+                                </select>
+                              </p>
+							{{form.as_p}}
+							<button class="btn btn-default">Añadir {% bs_icon 'plus'%}</button>
+						</form>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+                  </div>
+    </div>
+</section>
+{% endblock %}

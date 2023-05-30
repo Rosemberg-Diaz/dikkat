@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load bootstrap_icons %}
+<!-- Welcome Section -->
+<nav id="navbar-header" class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand navbar-brand-center d-flex align-items-center p-0 only-mobile" href="/">
+            <img src="img/logo.png" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="lnr lnr-menu"></span>
+        </button>
+        {% if request.user.is_authenticated %}
+        <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+			<ul class="navbar-nav d-flex justify-content-between">
+                <li class="nav-item only-desktop">
+                    <a class="nav-link" id="side-nav-open" href="#">
+                        <span class="lnr lnr-menu"></span>
+                    </a>
+                </li>
+                <div class="d-flex flex-lg-row flex-column">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="">{{user.restaurante}} <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'restaurante' user.restaurante %}">Sobre nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'especiales' user.restaurante %}">Platos especiales</a>
+                    </li>
+                </div>
+            </ul>
+
+            <a class="navbar-brand navbar-brand-center d-flex align-items-center only-desktop" href="#">
+                <img src="img/logo.png" alt="">
+            </a>
+            <ul class="navbar-nav d-flex justify-content-between">
+                <div class="d-flex flex-lg-row flex-column">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'menu' user.restaurante %}">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'team' user.restaurante %}">Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Tienda' user.restaurante %}">Ordenar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesion</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Iniciar sesion</a>
+                    </li>
+                    {% endif %}
+                </div>
+                <li class="nav-item">
+                    <a id="side-search-open" class="nav-link" href="#">
+                        <span class="lnr lnr-magnifier"></span>
+                    </a>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+</nav>
+<section id="gtco-welcome" class="bg-white section-padding">
+    <div class="container">
+        <div class="section-content">
+            <div class="row">
+                <div class="col-sm-5 img-bg d-flex shadow align-items-center justify-content-center justify-content-md-end img-2" style="background-image: url(img/hero-2.jpg);">
+                    
+                </div>
+                <div class="col-sm-7 py-5 pl-md-0 pl-4">
+                    <div class="heading-section pl-lg-5 ml-md-5">
+                        <div class="row">
+                        <div class="col-sm-9">
+                            <span class="subheading">
+                            About
+                        </span>
+                            {% if request.user.is_authenticated %}
+                        <h2>
+                            Bienvenido a {{user.restaurante}} {{user.username}}
+                        </h2>
+                        {% else %}
+                        <h2>
+                            Bienvenido a {{restaurante.nombre}}
+                        </h2>
+                        {% endif %}
+                            <h1>
+                                {{error}}
+                            </h1>
+                        </div>
+                            {% if request.user.is_authenticated %}
+                            <div class="col-sm-2">
+                            <a type="button" class="btn btn-default" href="{% url 'editarRest' user.restaurante %}">Editar {% bs_icon 'pencil'%}</a>
+                            </div>
+                            {% endif %}<br><br>
+                        </div>
+
+
+                    </div>
+                    <div class="pl-lg-5 ml-md-5">
+                        <p>{{restaurante.descripcion}}
+                        <h3 class="mt-5">Especiales de {{restaurante.nombre}}</h3>
+                        <div class="row">
+                            {% for plato in especiales %}
+                            <div class="col-4">
+                                <a href="#" class="thumb-menu">
+                                    <img class="img-fluid img-cover" src="data:image/jpeg;base64,{{plato.imagenMenu}}" />
+                                    <h6>{{plato.nombre}}</h6>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

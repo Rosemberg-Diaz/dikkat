@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load bootstrap_icons %}
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+
+    <title>Bienvenido a la Tienda</title>
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Styles -->
+    <link href="{% static 'css/estilos.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 align-self-center"><h1 class="display-1">TIENDA</h1></div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-md-12 m-3">
+                {% include "Ordenes/carrito.html" %}
+            </div>
+            <div class="col-12">
+                <div class="row" style="padding: 10px 0;">
+                    <div class="col-12">
+                        <div class="row">
+                            {% for estacion in estaciones %}
+                                <div class="col-md-6 menu-wrap">
+                                <div class="heading-menu">
+                                    <h3 class="text-center mb-5">{{estacion}}</h3>
+                                </div>
+                                    {% for plato in platos %}
+                                    {% if plato.estacion == estacion %}
+                                <div class="menus d-flex align-items-center">
+                                    <div class="menu-img rounded-circle">
+                                        <img class="img-fluid" src="data:image/jpeg;base64,{{plato.imagenMenu}}" alt="">
+                                    </div>
+                                    <div class="text-wrap">
+                                        <div class="row align-items-start">
+                                            <div class="col-md-8">
+                                                <h4>{{plato.nombre}}</h4>
+                                                <p>
+                                                    {{plato.descripcion}}
+                                                 </p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="col-6">
+                                                    <h4 class="text-muted menu-price">{{plato.precio}}</h4>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <a href="{% url 'Add' user.restaurante plato.id %}" class="btn btn-default">Pedir {% bs_icon 'clipboard'%}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap -->
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
+{% endblock %}
