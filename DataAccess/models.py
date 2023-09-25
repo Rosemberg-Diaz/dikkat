@@ -1,4 +1,4 @@
-from django.contrib.gis.db import models
+from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .validators import numeroValido
 from django.contrib.auth.models import AbstractUser
@@ -26,14 +26,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-class proveedor(models.Model):
-    nombre = models.CharField(max_length=200, unique=True)
-    telefono = models.CharField(max_length=200, validators=[numeroValido])
-    email = models.EmailField(max_length=100)
-    ubicacion = models.PointField(srid=4326, null=True,blank=True)
-    restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
-    def __str__(self):
-        return self.nombre
 
 class producto(models.Model):
     class estado(models.TextChoices):

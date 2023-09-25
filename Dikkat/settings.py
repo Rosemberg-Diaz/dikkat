@@ -14,12 +14,12 @@ from pathlib import Path
 import os
 from django.urls import reverse_lazy
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 os.environ['PROJ_LIB'] = 'D:\Programas\Anaconda3\envs\Dikkat\Library\share\proj'
 os.environ['GDAL_DATA'] = 'D:\Programas\Anaconda3\envs\Dikkat\Library\share'
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
     'django_extensions',
     'django_bootstrap_icons',
     'bs_icons',
@@ -86,13 +85,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Dikkat.wsgi.application'
 
+GDAL_LIBRARY_PATH = 'D:\Programas\Anaconda3\envs\Dikkat\Library\bin\gdal.dll'  # En sistemas basados en Unix/Linux
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'dikkat',
         'USER': 'postgres',
         'PASSWORD': 'rddm22',
