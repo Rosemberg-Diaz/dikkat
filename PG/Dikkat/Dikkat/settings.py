@@ -146,12 +146,17 @@ LOGOUT_REDIRECT_URL = reverse_lazy('inicio')
 LOGIN_REDIRECT_URL = reverse_lazy('inicio')
 LOGIN_URL = reverse_lazy('inicio')
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp@gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dikkatrc@gmail.com'
-EMAIL_HOST_PASSWORD = 'Rosemberg#22'
+
+# settings.py
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'dikkatrc@gmail.com'  # Reemplaza con tu dirección de correo electrónico de Gmail
+EMAIL_HOST_PASSWORD = 'hvpw tpxy fsnq dlbh'  # Reemplaza con tu contraseña de aplicación
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

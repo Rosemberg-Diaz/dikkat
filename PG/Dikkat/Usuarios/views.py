@@ -8,13 +8,15 @@ def loginView(request):
     if request.method == 'GET':
         return render(request, 'Usuarios/login.html',{
             'form': AuthenticationForm,
+            'isLogin': True
         })
     else:
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
             return render(request, 'Usuarios/login.html', {
                 'form': AuthenticationForm,
-                'error': "Usuario o contraseña incorrecta"
+                'error': "Usuario o contraseña incorrecta",
+                'isLogin': True
             })
         else:
             login(request, user)
@@ -23,7 +25,8 @@ def loginView(request):
 def register(request, rest):
     if request.method == 'GET':
         return render(request, 'Usuarios/register.html',{
-            'form': forms.CreateUserForm
+            'form': forms.CreateUserForm,
+            'isLogin': True
         })
     else:
         if request.POST['password1'] == request.POST['password1']:
@@ -35,12 +38,13 @@ def register(request, rest):
                 return redirect('inicio', user.restaurante)
         return render(request, 'Usuarios/register.html',{
                     'form': forms.CreateUserForm,
-                    'error': 'Contraseñas no coinciden'
+                    'error': 'Contraseñas no coinciden',
+                     'isLogin': True
                 })
 
 def team(request, rest):
     return render(request, 'Usuarios/team.html')
 
-def salir(request):
+def salir(request, rest):
     logout(request)
-    return redirect("inicio")
+    return redirect("inicio", rest)

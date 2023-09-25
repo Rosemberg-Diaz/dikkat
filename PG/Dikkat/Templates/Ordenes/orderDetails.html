@@ -7,11 +7,17 @@
         <div class="section-content">
             <div class="heading-section text-center">
                 <span class="subheading">
-                    Specialties
+                    Orden: {{identificator}}
                 </span>
+                {% if estado %}
                 <h2>
-                    Special Dishes
+                    Tu orden ya fue enviada a la cocina
                 </h2>
+                {% else %}
+                <h2>
+                    Tu orden ya fue entregada
+                </h2>
+                {% endif %}
             </div>
             {% load index %}
             {% for dato in tamano %}
@@ -23,7 +29,7 @@
                         <h3><span>{{especiales|indexNombre:dato}}</span><br></h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
                         <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
-                        <a href="#" class="btn-primary mt-3">book a table</a>
+                        <h3 class="special-dishes-price">Cantidad: {{cantidades|index:dato}}</h3>
                     </div>
                 </div>
                 <div class="col-lg-5 offset-lg-2 col-md-6 align-self-center mt-4 mt-md-0">
@@ -33,7 +39,7 @@
             {% else %}
             <div class="row mt-5">
                 <div class="col-lg-5 col-md-6 align-self-center order-2 order-md-1 mt-4 mt-md-0">
-                    <img src="{% static 'img/salmon-zucchini.jpg' %}" alt="" class="img-fluid shadow w-100">
+                    <img src="data:image/jpeg;base64,{{especiales|indexImagen:dato}}" alt="" class="img-fluid shadow w-100">
                 </div>
                 <div class="col-lg-5 offset-lg-2 col-md-6 align-self-center order-1 order-md-2 py-5">
                     <h2 class="special-number">{{especiales|indexId:dato}}</h2>
@@ -41,7 +47,7 @@
                         <h3><span>{{especiales|indexNombre:dato}}</span><br> </h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
                         <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
-                        <a href="#" class="btn-primary mt-3">book a table <span><i class="fa fa-long-arrow-right"></i></span></a>
+                        <h3 class="special-dishes-price">Cantidad: {{cantidades|index:dato}}</h3>
                     </div>
                 </div>
             </div>

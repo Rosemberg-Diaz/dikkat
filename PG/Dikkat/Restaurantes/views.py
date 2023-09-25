@@ -24,7 +24,11 @@ def dikkat(request,rest):
     return render(request, 'Restaurante/about.html',context)
 
 def restauranteView(request, rest):
-    return render(request, 'Restaurante/index.html')
+    restau = models.restaurante.objects.filter(nombre=rest)
+    context = {
+        'restaurante': restau[0],
+    }
+    return render(request, 'Restaurante/index.html',context)
 
 def menu(request, rest):
     restau = models.restaurante.objects.filter(nombre=rest)
@@ -70,7 +74,7 @@ def especiales(request, rest):
         }
     return render(request, 'Restaurante/special-dishes.html', context)
 
-def crearRest(request, rest):
+def crearRest(request):
     # check if the request is post
     if request.method == 'POST':
 

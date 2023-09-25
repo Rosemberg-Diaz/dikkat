@@ -2,7 +2,7 @@
 <table class="table table-bordered">
   <thead>
     <tr>
-      <th scope="row" colspan="3" class="text-center">CARRITO</th>
+      <th scope="row" colspan="3" class="text-center">Pedido</th>
     </tr>
     <tr>
       <th scope="col">NOMBRE</th>
@@ -19,9 +19,9 @@
       <td class="row"><div class="col-md-8">$ {{value.acumulado}}</div>
         <div class="col-md-3">
           <div class="row">
-        <a href="{% url 'Add' user.restaurante value.producto_id %}" class="badge btn btn-dark badge-dark">+</a>
+        <a href="{% url 'Add' restaurante value.producto_id %}" class="badge btn btn-dark badge-dark">+</a>
         <input type="text" disabled="true" value={{value.cantidad}} style="width: 30%;;">
-        <a href="{% url 'Sub' user.restaurante value.producto_id %}" class="badge btn btn-dark badge-dark">-</a></div></div>
+        <a href="{% url 'Sub' restaurante value.producto_id %}" class="badge btn btn-dark badge-dark">-</a></div></div>
       </td>
     </tr>
   {% endfor %}
@@ -39,8 +39,4 @@
   </tbody>
 </table>
 <hr>
-</div>
-<div class="row text-center">
-    <div class="col-6"><a href="{% url 'CLS' user.restaurante %}" class="btn btn-danger">Limpiar</a></div>
-    <div class="col-6"><a href="{% url 'CrearOrden' user.restaurante %}" class="btn btn-success">Guardar</a></div>
 </div>

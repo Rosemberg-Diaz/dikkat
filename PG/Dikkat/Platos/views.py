@@ -96,6 +96,7 @@ def proByPla(request, rest, pla):
         return render(request, 'Platos/productosByPlatos.html', context)
 
 def crearPro(request, rest):
+    restau = models.restaurante.objects.filter(nombre=rest)
     # check if the request is post
     if request.method == 'POST':
         # Pass the form data to the form class
@@ -123,16 +124,20 @@ def crearPro(request, rest):
 
             # Redirect back to the same page if the data
             # was invalid
-            return render(request, "Platos/crearProducto.html", {'form': details})
+            return render(request, "Platos/crearProducto.html", {'form': details,  'restaurante': restau[0]})
     else:
 
         # If the request is a GET request then,
         # create an empty form object and
         # render it into the page
         form = forms.productoForm(None)
-        return render(request, 'Platos/crearProducto.html', {'form': form})
+        return render(request, 'Platos/crearProducto.html', {'form': form,  'restaurante': restau[0]})
 
 def crearPla(request, rest):
+    restau = models.restaurante.objects.filter(nombre=rest)
+    context = {
+        'restaurante': restau[0],
+    }
     # check if the request is post
     if request.method == 'POST':
 
@@ -164,16 +169,17 @@ def crearPla(request, rest):
 
             # Redirect back to the same page if the data
             # was invalid
-            return render(request, "Platos/crearPlato.html", {'form': details})
+            return render(request, "Platos/crearPlato.html", {'form': details,  'restaurante': restau[0]})
     else:
 
         # If the request is a GET request then,
         # create an empty form object and
         # render it into the page
         form = forms.platoForm(None)
-        return render(request, 'Platos/crearPlato.html', {'form': form})
+        return render(request, 'Platos/crearPlato.html', {'form': form,  'restaurante': restau[0]})
 
 def editarPla (request,rest, plat):
+  restau = models.restaurante.objects.filter(nombre=rest)
   p = models.plato.objects.get(nombre=plat)
   if request.method == "POST":
      form = forms.platoForm(request.POST,instance=p)
@@ -187,12 +193,13 @@ def editarPla (request,rest, plat):
         return redirect('añadirPro', rest, p.nombre)
      else :
         form = forms.platoForm(instance=p)
-        return render(request, 'Platos/editarPlato.html', {'form': form})
+        return render(request, 'Platos/editarPlato.html', {'form': form,  'restaurante': restau[0]})
   else:
     form = forms.platoForm(instance=p)
-    return render(request, 'Platos/editarPlato.html', {'form': form})
+    return render(request, 'Platos/editarPlato.html', {'form': form,  'restaurante': restau[0]})
 
 def editarPro (request,rest, pro):
+  restau = models.restaurante.objects.filter(nombre=rest)
   p = models.producto.objects.get(nombre=pro)
   if request.method == "POST":
      form = models.productoForm(request.POST,instance=p)
@@ -207,7 +214,7 @@ def editarPro (request,rest, pro):
         return redirect('productos', rest)
      else :
         form = forms.productoForm(instance=p)
-        return render(request, 'Platos/editarProducto.html', {'form': form})
+        return render(request, 'Platos/editarProducto.html', {'form': form,  'restaurante': restau[0]})
   else:
     form = forms.productoForm(instance=p)
-    return render(request, 'Platos/editarProducto.html', {'form': form})
+    return render(request, 'Platos/editarProducto.html', {'form': form,  'restaurante': restau[0]})
