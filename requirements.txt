@@ -6,7 +6,6 @@ django-bootstrap-icons==0.8.2
 django-bs-icons==0.2.2
 django-extensions==3.2.1
 django-geojson==4.0.0
-GDAL==3.7.2
 graphviz==2.50.0
 idna==3.4
 numpy==1.26.0
