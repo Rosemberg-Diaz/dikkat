@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from django.urls import reverse_lazy
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -86,16 +87,7 @@ WSGI_APPLICATION = 'Dikkat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dikkat',
-        'USER': 'postgres',
-        'PASSWORD': 'rddm22',
-        'HOST': '127.0.0.1',
-        'PORT': '5433',
-    }
-}
+DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
 AUTH_USER_MODEL = 'DataAccess.User'
 # Password validation
