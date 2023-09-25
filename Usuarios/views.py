@@ -45,6 +45,9 @@ def register(request, rest):
 def team(request, rest):
     return render(request, 'Usuarios/team.html')
 
+def inicio(request, rest):
+    return render(request, 'Usuarios/team.html')
+
 def salir(request, rest):
     logout(request)
     return redirect("inicio", rest)
