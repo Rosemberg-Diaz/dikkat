@@ -1,1 +1,1 @@
-web: dikkat.wsgi
+web: gunicorn dikkat.wsgi
