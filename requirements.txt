@@ -9,7 +9,6 @@ django-geojson==4.0.0
 GDAL==3.4.1
 graphviz==2.50.0
 idna==3.4
-numpy==1.23.1
 Pillow==9.2.0
 postgis==1.0.4
 psycopg2-binary==2.9.4
