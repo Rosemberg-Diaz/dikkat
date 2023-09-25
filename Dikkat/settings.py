@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'django_bootstrap_icons',
     'bs_icons',
     'Ordenes'
-
 ]
 
 MIDDLEWARE = [
@@ -145,15 +144,15 @@ LOGIN_URL = reverse_lazy('inicio')
 # settings.py
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'dikkatrc@gmail.com'  # Reemplaza con tu dirección de correo electrónico de Gmail
-EMAIL_HOST_PASSWORD = 'hvpw tpxy fsnq dlbh'  # Reemplaza con tu contraseña de aplicación
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False').lower() == 'true'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = os.environ.get('DEFAULT_AUTO_FIELD')
