@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('<str:rest>/registro', views.register, name='registro'),
     path('<str:rest>/team', views.team, name='team'),
-    path('', views.inicio, name='inicio'),
+    path('', views.inicio, name='index'),
     path('dikkat/login', views.loginView, name='login'),
     path('dikkat/logout/<str:rest>', views.salir, name='logout'),
 ]
