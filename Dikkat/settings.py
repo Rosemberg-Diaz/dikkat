@@ -18,9 +18,6 @@ from django.urls import reverse_lazy
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-os.environ['PROJ_LIB'] = 'D:\Programas\Anaconda3\envs\Dikkat\Library\share\proj'
-os.environ['GDAL_DATA'] = 'D:\Programas\Anaconda3\envs\Dikkat\Library\share'
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -85,8 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Dikkat.wsgi.application'
 
-GDAL_LIBRARY_PATH = 'D:\Programas\Anaconda3\envs\Dikkat\Library\bin\gdal.dll'  # En sistemas basados en Unix/Linux
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -142,7 +137,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'Static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/Media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Media')
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 LOGOUT_REDIRECT_URL = reverse_lazy('inicio')
 LOGIN_REDIRECT_URL = reverse_lazy('inicio')
