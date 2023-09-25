@@ -17,12 +17,17 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-12 align-self-center"><h1 class="display-1">TIENDA</h1></div>
+            <div class="col-12 align-self-center"><h1 class="display-1">{{rest}}</h1></div>
         </div>
 
         <div class="row align-items-center">
             <div class="col-md-12 m-3">
                 {% include "Ordenes/carrito.html" %}
+            </div>
+            <div class="col-md-12 m-3">
+                <form method="post">
+                  {% csrf_token %}
+                  {{ form.as_p }}
             </div>
             <div class="col-12">
                 <div class="row" style="padding: 10px 0;">
@@ -53,7 +58,7 @@
                                                 </div>
 
                                                 <div class="col-6">
-                                                    <a href="{% url 'Add' user.restaurante plato.id %}" class="btn btn-default">Pedir {% bs_icon 'clipboard'%}</a>
+                                                    <a href="{% url 'Add' restaurante plato.id %}" class="btn btn-default">Pedir {% bs_icon 'clipboard'%}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -70,6 +75,12 @@
             </div>
 
         </div>
+
+        <div class="row text-center">
+                <div class="col-6"><a href="{% url 'CLS' restaurante %}" class="btn btn-danger" >Limpiar</a></div>
+                <div class="col-6"><button class="btn btn-success" type="submit">Pedir</button></div>
+        </div>
+        </form>
     </div>
 
     <!-- Bootstrap -->

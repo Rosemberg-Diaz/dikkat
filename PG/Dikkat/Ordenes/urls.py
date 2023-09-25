@@ -10,4 +10,5 @@ urlpatterns = [
     path('<str:rest>/ordenar/restar/<int:producto_id>/', views.restar_producto, name="Sub"),
     path('<str:rest>/ordenar/limpiar/', views.limpiar_carrito, name="CLS"),
     path('<str:rest>/crearOrden', views.crear_orden, name="CrearOrden"),
+    path('<str:rest>/order/<str:identificator>', views.orderDetails, name="OrderDetails"),
 ]

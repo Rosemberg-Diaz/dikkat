@@ -20,9 +20,8 @@ class restauranteForm(forms.ModelForm):
 
     class Meta:
         model = restaurante
-        fields = ['nombre','descripcion','telefono']
+        fields = ['nombre','descripcion','telefono','cantidadMesas']
 
-    file = forms.FileField()
 
     def clean(self):
 
@@ -79,6 +78,17 @@ class productoForm(forms.ModelForm):
         # return any errors if found
         return self.cleaned_data
 
+class CorreoForm(forms.Form):
+    correo = forms.EmailField(label='Correo Electrónico')
+
+    def __init__(self, num_choices=3, *args, **kwargs):
+        super(CorreoForm, self).__init__(*args, **kwargs)
+        self.fields['numero'] = forms.ChoiceField(
+            choices=[(i, str(i)) for i in range(1, num_choices + 1)],
+            label='Selecciona un número'
+        )
+
+
 class platoForm(forms.ModelForm):
 
     class Meta:
@@ -124,4 +134,14 @@ class platoForm(forms.ModelForm):
 
         # return any errors if found
         return self.cleaned_data
+
+    class CorreoForm(forms.Form):
+        correo = forms.EmailField(label='Correo Electrónico')
+
+        def __init__(self, num_choices=3, *args, **kwargs):
+            super(CorreoForm, self).__init__(*args, **kwargs)
+            self.fields['numero'] = forms.ChoiceField(
+                choices=[(i, str(i)) for i in range(1, num_choices + 1)],
+                label='Selecciona un número'
+            )
 

@@ -7,19 +7,22 @@ class restaurante(models.Model):
     nombre = models.CharField(max_length=200, unique=True)
     descripcion = models.TextField(max_length=1000, default="")
     telefono = models.CharField(max_length=200, validators=[numeroValido])
-    logo = models.CharField(max_length=200, default="cx")
+    logo = models.TextField(default="X")
     cantidadMesas = models.PositiveIntegerField(default=4)
     def __str__(self):
         return self.nombre
 
 class User(AbstractUser):
     class rol(models.TextChoices):
-        DUEÑO = 'Dueño', ('DUEÑO')
-        EMPLEADO = 'Empleado', ('EMPLEADO')
+        BEBIDA = 'Bebida', ('BEBIDA')
+        PRINCIPAL = 'Principal', ('PRINCIPAL')
+        POSTRE = 'Postre', ('POSTRE')
+        CAJA = 'Dueño', ('CAJA')
         __empty__ = ('Seleccione')
 
     rol = models.CharField(choices=rol.choices,max_length=200)
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
+    isAdminRest = models.BooleanField(default=False)
     def __str__(self):
         return self.username
 
@@ -77,10 +80,12 @@ class inventario(models.Model):
     cantidadGastada = models.FloatField(validators=[MinValueValidator(0.0)])
 
 class orden(models.Model):
+    identificator = models.TextField(default="X")
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
     plato = models.ForeignKey(plato, on_delete=models.CASCADE, null=True, blank=True)
     mesa = models.PositiveIntegerField()
     cantidad = models.IntegerField(default=1)
+    estado = models.BooleanField(default=True)
     horaPedido = models.DateTimeField()
 
 class factura(models.Model):

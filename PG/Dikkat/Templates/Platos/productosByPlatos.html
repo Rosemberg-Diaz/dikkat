@@ -15,7 +15,7 @@
                 </h1>
             </div>
             <div class="col-sm-2">
-                <a type="button" class="btn btn-default" href="{% url 'menu' user.restaurante %}">Ver menu {% bs_icon 'clipboard'%}</a>
+                <a type="button" class="btn btn-default" href="{% url 'menu' restaurante %}">Ver menu {% bs_icon 'clipboard'%}</a>
             </div><br><br></div>
             </div>
             <div class="row">
@@ -49,6 +49,7 @@
                     <div class="pl-lg-5 ml-md-5">
                         {% if productos == 0 %}
                             <h2>No hay productos aun, por favor añadalos para continuar.</h2>
+                            <a class="btn btn-default" href="{% url 'crearPro' restaurante %}">Añadir {% bs_icon 'plus'%}</a>
                         {% else %}
                         <form method="POST" enctype="multipart/form-data">
 							{% csrf_token %}

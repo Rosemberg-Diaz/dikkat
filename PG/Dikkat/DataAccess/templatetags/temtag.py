@@ -18,5 +18,9 @@ def indexPrecio(indexable, i):
     return indexable[i].precio
 
 @register.filter
+def indexImagen(indexable, i):
+    return indexable[i].imagenMenu
+
+@register.filter
 def index(indexable, i):
     return indexable[i]
