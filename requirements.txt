@@ -1,22 +1,22 @@
-asgiref==3.7.2
-certifi @ file:///C:/b/abs_ac29jvt43w/croot/certifi_1665076682579/work/certifi
+asgiref==3.5.2
+certifi==2022.10.11
 charset-normalizer==3.1.0
-Django @ file:///C:/Users/BUILDE~1/AppData/Local/Temp/abs_eeor5o9jj8/croots/recipe/django_1661292534510/work
+Django==4.1
 django-bootstrap-icons==0.8.2
 django-bs-icons==0.2.2
 django-extensions==3.2.1
 django-geojson==4.0.0
 GDAL==3.4.1
-graphviz @ file:///C:/Windows/TEMP/abs_7a4z36rraa/croots/recipe/python-graphviz_1660063185022/work
+graphviz==2.50.0
 idna==3.4
-numpy @ file:///D:/bld/numpy_1657483944523/work
+numpy==1.23.1
 Pillow==9.2.0
 postgis==1.0.4
 psycopg2-binary==2.9.4
 pydotplus==2.0.2
 pyparsing==3.0.9
 requests==2.28.2
-sqlparse @ file:///tmp/build/80754af9/sqlparse_1602184451250/work
-tzdata @ file:///tmp/build/80754af9/python-tzdata_1611693927741/work
+sqlparse==0.4.1
+tzdata==2022e
 urllib3==1.26.15
 wincertstore==0.2
