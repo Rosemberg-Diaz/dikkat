@@ -46,7 +46,7 @@ def team(request, rest):
     return render(request, 'Usuarios/team.html')
 
 def inicio(request):
-    return render(request, 'Usuarios/team.html')
+    return HttpResponse("Dikkkat")
 
 def salir(request, rest):
     logout(request)
