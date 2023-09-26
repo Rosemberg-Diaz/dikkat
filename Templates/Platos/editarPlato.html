@@ -22,7 +22,8 @@
                         </div>
                         <div class="col-sm-2">
                             <a type="button" class="btn btn-default" href="{% url 'menu' restaurante %}">Ver menu {% bs_icon 'clipboard'%}</a>
-                        </div><br><br>
+                        </div>
+                            <br><br>
                         </div>
                     </div>
                     <div class="pl-lg-5 ml-md-5">
@@ -30,8 +31,8 @@
 						<form method="POST">
 							{% csrf_token %}
 							{{form.as_p}}
-							<button class="btn btn-default">
-								Enviar {% bs_icon 'arrow-up-right-circle-fill'%}
+							<button class="btn btn-primary m-5 w-50">
+								Enviar y editar productos {% bs_icon 'arrow-up-right-circle-fill'%}
 							</button>
 						</form>
 

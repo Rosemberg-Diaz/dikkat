@@ -20,7 +20,23 @@ class restauranteForm(forms.ModelForm):
 
     class Meta:
         model = restaurante
-        fields = ['nombre','descripcion','telefono','cantidadMesas']
+        fields = ['nombre','descripcion','telefono','cantidadMesas','instagram','facebook','twiter','lunes','martes','miercoles','jueves','viernes','sabado','domingo']
+        labels = {
+            'nombre': 'Nombre',
+            'descripcion': 'Descripción',
+            'telefono': 'Teléfono',
+            'cantidadMesas': 'Cantidad de Mesas',
+            'instagram': 'Instagram URL',
+            'facebook': 'Facebook URL',
+            'twitter': 'Twitter URL',
+            'lunes': 'Horario del Lunes en formato (hora inicio-hora final)',
+            'martes': 'Horario del Martes en formato (hora inicio-hora final)',
+            'miercoles': 'Horario del Miércoles en formato (hora inicio-hora final)',
+            'jueves': 'Horario del Jueves en formato (hora inicio-hora final)',
+            'viernes': 'Horario del Viernes en formato (hora inicio-hora final)',
+            'sabado': 'Horario del Sábado en formato (hora inicio-hora final)',
+            'domingo': 'Horario del Domingo en formato (hora inicio-hora final)',
+        }
 
 
     def clean(self):
@@ -43,6 +59,13 @@ class restauranteForm(forms.ModelForm):
         # return any errors if found
         return self.cleaned_data
 
+        # Agrega la clase personalizada a los div generados por as_div
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in ['nombre','descripcion','telefono','cantidadMesas','instagram','facebook','twiter','lunes','martes','miercoles','jueves','viernes','sabado','domingo']:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'form-control ml-3 mb-4'
+
 class productoForm(forms.ModelForm):
 
     class Meta:
@@ -53,6 +76,12 @@ class productoForm(forms.ModelForm):
     #     super(productoForm, self).__init__(*args, **kwargs)
     #     self.fields['restaurante'].disabled = True
     #     # this function will be used for the validation
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in ['nombre','precio','unidadMedida','estado','cantidadDisponible']:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'form-control ml-3 mb-4'
 
     def clean(self):
 
@@ -81,13 +110,22 @@ class productoForm(forms.ModelForm):
 class CorreoForm(forms.Form):
     correo = forms.EmailField(label='Correo Electrónico')
 
-    def __init__(self, num_choices=3, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(CorreoForm, self).__init__(*args, **kwargs)
+        for field_name in ['correo']:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'form-control ml-3 mb-4'
+
+class MesaForm(forms.Form):
+    def __init__(self, num_choices=3, *args, **kwargs):
+        super(MesaForm, self).__init__(*args, **kwargs)
         self.fields['numero'] = forms.ChoiceField(
             choices=[(i, str(i)) for i in range(1, num_choices + 1)],
-            label='Selecciona un número'
+            label='Selecciona el numero de mesa en la que te encuentras'
         )
-
+        for field_name in ['numero']:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'form-control w-50 ml-3 mb-4'
 
 class platoForm(forms.ModelForm):
 
@@ -102,14 +140,12 @@ class platoForm(forms.ModelForm):
         "especial": "Especial",
         "precio": "Precio",
     }
-    # widgets = {
-    #     "nombre": forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password', "placeholder": "أدخل كلمة المرور الحالية"}),
-    #     "descripcion": forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password', "placeholder": "أدخل كلمة المرور الجديدة"}),
-    #     "precio": forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password', "placeholder": "أدخل كلمة المرور الجديدة مرة أخرى"})
-    # }
-    # help_texts = {
-    #     'name': _('Some useful help text.'),
-    # }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in ['nombre','descripcion','estacion','especial','precio']:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'form-control ml-3 mb-4'
 
     def clean(self):
 

@@ -15,7 +15,7 @@
                         <div class="row">
                         <div class="col-sm-9">
                             <span class="subheading">
-                            About
+                            Todo sobre
                         </span>
                             {% if request.user.is_authenticated %}
                         <h2>
@@ -41,6 +41,7 @@
                     </div>
                     <div class="pl-lg-5 ml-md-5">
                         <p>{{restaurante.descripcion}}
+                        {% if especiales %}
                         <h3 class="mt-5">Especiales de {{restaurante.nombre}}</h3>
                         <div class="row">
                             {% for plato in especiales %}
@@ -52,6 +53,7 @@
                             </div>
                             {% endfor %}
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

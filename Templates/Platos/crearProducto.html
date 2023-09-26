@@ -27,10 +27,14 @@
                     </div>
                     <div class="pl-lg-5 ml-md-5">
 
-						<form method="POST">
+						<form method="POST" enctype="multipart/form-data">
 							{% csrf_token %}
 							{{form.as_p}}
-							<button class="btn btn-default">
+                            <div class="mb-3">
+                                <label for="uploadFromPC" class="form-label">Selecciona una imagen para su logo:</label>
+                                <input type="file" name="uploadFromPC" id="uploadFromPC" class="form-control" title="Upload From PC" value= "Upload from PC" onchange="uploadPC()" style="float:left;" required>
+                            </div>
+							<button class="btn btn-primary m-5 w-50">
 								Enviar {% bs_icon 'arrow-up-right-circle-fill'%}
 							</button>
 						</form>

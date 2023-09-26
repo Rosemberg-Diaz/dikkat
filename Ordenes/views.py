@@ -30,10 +30,9 @@ def tienda(request, rest):
     num_choices = restau[0].cantidadMesas  # Cambia este valor según tus necesidades
     if request.method == 'POST':
 
-        form = forms.CorreoForm(num_choices, request.POST)
+        form = forms.MesaForm(num_choices, request.POST)
         if form.is_valid():
             # Procesa los datos del formulario aquí
-            correo = form.cleaned_data['correo']
             numero = form.cleaned_data['numero']
             for plato in carrito.carrito:
                 print(plato)
@@ -49,40 +48,41 @@ def tienda(request, rest):
                                         horaPedido=hora, identificator=fecha_hora_actual_str)
                 newOrden.save()
             carrito.limpiar()
-            # Datos que deseas pasar a la plantilla (contexto)
-            tam = range(len(platos))
-            context = {
-                'restaurante': restau[0],
-                'platos': platos,
-                'cantidades': cantidades,
-                'total': total,
-                'tam': tam,
-                'totalPlato': totalPlato
-            }
-
-            # Renderiza la plantilla HTML a una cadena
-            html_content = render_to_string("Factura/factura.html", context)
-
-            # Renderiza la versión de texto sin formato del correo
-            text_content = strip_tags(html_content)
-
-            # Configura el correo electrónico
-            subject = 'Factura electronica'
-            from_email = 'dikkatrc@gmail.com'
-            recipient_list = [correo]
-
-            # Crea un objeto EmailMessage
-            email = EmailMessage(subject, strip_tags(html_content), from_email, recipient_list)
-
-            # Crea un objeto EmailMultiAlternatives
-            email = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
-
-            # Adjunta la versión HTML de la plantilla
-            email.attach_alternative(html_content, "text/html")
-            # Envía el correo electrónico
-            email.send()
+            return redirect('OrderDetails', rest, fecha_hora_actual_str)
+            # # Datos que deseas pasar a la plantilla (contexto)
+            # tam = range(len(platos))
+            # context = {
+            #     'restaurante': restau[0],
+            #     'platos': platos,
+            #     'cantidades': cantidades,
+            #     'total': total,
+            #     'tam': tam,
+            #     'totalPlato': totalPlato
+            # }
+            #
+            # # Renderiza la plantilla HTML a una cadena
+            # html_content = render_to_string("Factura/factura.html", context)
+            #
+            # # Renderiza la versión de texto sin formato del correo
+            # text_content = strip_tags(html_content)
+            #
+            # # Configura el correo electrónico
+            # subject = 'Factura electronica'
+            # from_email = 'dikkatrc@gmail.com'
+            # recipient_list = [correo]
+            #
+            # # Crea un objeto EmailMessage
+            # email = EmailMessage(subject, strip_tags(html_content), from_email, recipient_list)
+            #
+            # # Crea un objeto EmailMultiAlternatives
+            # email = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
+            #
+            # # Adjunta la versión HTML de la plantilla
+            # email.attach_alternative(html_content, "text/html")
+            # # Envía el correo electrónico
+            # email.send()
     else:
-        form = forms.CorreoForm(num_choices)
+        form = forms.MesaForm(num_choices)
     platos = models.plato.objects.filter(restaurante=restau[0])
     inven = models.inventario.objects.all()
     estaciones = []
@@ -121,6 +121,48 @@ def orderDetails(request, rest, identificator):
         'estado':orders[0].estado
     }
     return render(request, 'Ordenes/orderDetails.html', context)
+
+def ordenes(request, rest):
+    restau = models.restaurante.objects.filter(nombre=rest)
+    orders = models.orden.objects.filter(restaurante=restau[0], estado=True)
+    ordenes = []
+    mesas = []
+    for pla in orders:
+        if pla.mesa not in mesas:
+            mesas.append(pla.mesa)
+
+
+    context = {
+        'restaurante': restau[0],
+        'ordenes': orders,
+        'mesas': mesas,
+        'estado':orders[0].estado
+    }
+    return render(request, 'Ordenes/ordenes.html', context)
+
+def entregarMesa(request, rest, mesa):
+    restau = models.restaurante.objects.filter(nombre=rest)
+    orders = models.orden.objects.filter(restaurante=restau[0], estado=True)
+    ordenes = []
+    mesas = []
+    for pla in orders:
+        print(pla.mesa)
+        if pla.mesa == int(mesa):
+            print(pla)
+            pla.estado = False
+            pla.save()
+
+    for pla in orders:
+        if pla.mesa not in mesas:
+            mesas.append(pla.mesa)
+
+
+    context = {
+        'restaurante': restau[0],
+        'ordenes': orders,
+        'mesas': mesas,
+    }
+    return render(request, 'Ordenes/ordenes.html', context)
 
 def agregar_producto(request, rest, producto_id):
     restau = models.restaurante.objects.filter(nombre=rest)

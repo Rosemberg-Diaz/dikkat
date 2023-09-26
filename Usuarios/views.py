@@ -43,7 +43,7 @@ def register(request, rest):
                 })
 
 def team(request, rest):
-    return render(request, 'Usuarios/team.html')
+    return render(request, 'Usuarios/team.html', {'isLogin':False})
 
 def inicio(request):
     return HttpResponse("Dikkkat")

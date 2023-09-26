@@ -16,6 +16,7 @@
                 {% else %}
                 <h2>
                     Tu orden ya fue entregada
+                    <a href="{% url 'CLS' restaurante %}" class="btn btn-danger" >Pagar</a>
                 </h2>
                 {% endif %}
             </div>
@@ -53,6 +54,8 @@
             </div>
             {% endif %}
             {% endfor %}
+
+
         </div>
     </div>
 </section>{% endblock %}

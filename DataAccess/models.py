@@ -8,7 +8,17 @@ class restaurante(models.Model):
     descripcion = models.TextField(max_length=1000, default="")
     telefono = models.CharField(max_length=200, validators=[numeroValido])
     logo = models.TextField(default="X")
-    cantidadMesas = models.PositiveIntegerField(default=4)
+    cantidadMesas = models.PositiveIntegerField()
+    instagram = models.CharField(max_length=200)
+    facebook = models.CharField(max_length=200)
+    twiter = models.CharField(max_length=200)
+    lunes = models.CharField(max_length=200)
+    martes = models.CharField(max_length=200)
+    miercoles = models.CharField(max_length=200)
+    jueves = models.CharField(max_length=200)
+    viernes = models.CharField(max_length=200)
+    sabado = models.CharField(max_length=200)
+    domingo = models.CharField(max_length=200)
     def __str__(self):
         return self.nombre
 
@@ -38,12 +48,13 @@ class producto(models.Model):
         LIBRAS = 'Libras', ('LIBRAS')
         __empty__ = ('Seleccione')
 
-    nombre = models.CharField(max_length=200, unique=True)
+    nombre = models.CharField(max_length=200)
     precio = models.FloatField(validators=[MinValueValidator(0.0)])
     unidadMedida = models.CharField(choices=unidadMedida.choices,max_length=200)
     estado = models.CharField(choices=estado.choices,max_length=200, default="Disponible")
     cantidadDisponible = models.FloatField(validators=[MinValueValidator(0.0)])
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
+    imagenInv = models.TextField(default="X")
     def __str__(self):
         return self.nombre
 
@@ -54,7 +65,7 @@ class plato(models.Model):
         POSTRE = 'Postre', ('POSTRE')
         __empty__ = ('Seleccione')
 
-    nombre = models.CharField(max_length=200, unique=True)
+    nombre = models.CharField(max_length=200)
     estacion = models.CharField(choices=estacion.choices,max_length=200)
     especial = models.BooleanField(default=True)
     descripcion = models.TextField(max_length=500)
@@ -90,6 +101,7 @@ class factura(models.Model):
     total = models.FloatField(validators=[MinValueValidator(0.0)])
     email = models.EmailField()
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
+    identificatorOrder = models.CharField(choices=pagos.choices,max_length=200, default="x")
 
 class productosFactura(models.Model):
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)

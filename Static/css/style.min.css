@@ -27,6 +27,58 @@ h1, h2 {
 .bg-grey {
   background-color: #f7f8f9; }
 
+/* Estilos para el formulario personalizado */
+.custom-form {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="number"],
+form textarea,
+form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+form textarea {
+    resize: vertical;
+}
+
+.custom-button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.boton-con-margen {
+            margin: 50px; /* Agrega un margen de 10px alrededor del botón */
+        }
+
+.custom-button:hover {
+    background-color: #0056b3;
+}
+
+
 a {
   color: #f34949; }
 

@@ -79,7 +79,7 @@ def crearRest(request):
     if request.method == 'POST':
 
         # Pass the form data to the form class
-        details = forms.restauranteForm(request.POST)
+        details = forms.restauranteForm(request.POST,request.FILES)
 
         # In the 'form' class the clean function
         # is defined, if all the data is correct
@@ -95,6 +95,7 @@ def crearRest(request):
             post.save()
             p = models.restaurante.objects.get(nombre=request.POST['nombre'])
             p.logo = imagen
+            p.save()
             # redirect it to some another page indicating data
             # was inserted successfully
             return redirect('inicio', p.nombre)
@@ -103,14 +104,13 @@ def crearRest(request):
 
             # Redirect back to the same page if the data
             # was invalid
-            return render(request, "Restaurante/crearRestaurante.html", {'form': details})
+            return render(request, "Restaurante/crearRestaurante.html", {'form': details, 'isLogin':True})
     else:
-
         # If the request is a GET request then,
         # create an empty form object and
         # render it into the page
         form = forms.restauranteForm(None)
-        return render(request, 'Restaurante/crearRestaurante.html', {'form': form})
+        return render(request, 'Restaurante/crearRestaurante.html', {'form': form, 'isLogin':True})
 
 def editarRest (request,rest):
   p = models.restaurante.objects.get(nombre=rest)
