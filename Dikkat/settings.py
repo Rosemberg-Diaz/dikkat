@@ -122,5 +122,7 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False').lower() == 'true'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-# Default primary key field type (configure in Heroku environment variables)
-DEFAULT_AUTO_FIELD = os.environ.get('DEFAULT_AUTO_FIELD')
+
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
