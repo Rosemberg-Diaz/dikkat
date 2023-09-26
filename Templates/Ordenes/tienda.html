@@ -24,11 +24,7 @@
             <div class="col-md-12 m-3">
                 {% include "Ordenes/carrito.html" %}
             </div>
-            <div class="col-md-12 m-3">
-                <form method="post">
-                  {% csrf_token %}
-                  {{ form.as_p }}
-            </div>
+
             <div class="col-12">
                 <div class="row" style="padding: 10px 0;">
                     <div class="col-12">
@@ -75,12 +71,16 @@
             </div>
 
         </div>
+        <div class="col-md-12 m-3">
+                <form method="post">
+                  {% csrf_token %}
+                  {{ form.as_p }}
 
         <div class="row text-center">
                 <div class="col-6"><a href="{% url 'CLS' restaurante %}" class="btn btn-danger" >Limpiar</a></div>
-                <div class="col-6"><button class="btn btn-success" type="submit">Pedir</button></div>
+                    <div class="col-6"><button class="btn btn-success" type="submit">Enviar orden</button></div>
         </div>
-        </form>
+        </form></div>
     </div>
 
     <!-- Bootstrap -->

@@ -100,7 +100,7 @@ def crearPro(request, rest):
     # check if the request is post
     if request.method == 'POST':
         # Pass the form data to the form class
-        details = forms.productoForm(request.POST, request.FILES)
+        details = forms.productoForm(request.POST)
 
         # In the 'form' class the clean function
         # is defined, if all the data is correct
@@ -112,10 +112,10 @@ def crearPro(request, rest):
             # before writing to the database
             post = details.save(commit=False)
             # Finally write the changes into database
+            post.restaurante = models.restaurante.objects.get(nombre=rest)
+            imagen = encode_file(request.FILES['uploadFromPC'])
+            post.imagenInv = imagen
             post.save()
-            p = models.producto.objects.get(nombre=request.POST['nombre'])
-            p.restaurante = models.restaurante.objects.get(nombre=rest)
-            p.save()
             # redirect it to some another page indicating data
             # was inserted successfully
             return redirect('productos', rest)
@@ -153,17 +153,14 @@ def crearPla(request, rest):
             # logic into the data if there is such a need
             # before writing to the database
             post = details.save(commit=False)
-
+            post.restaurante = models.restaurante.objects.get(nombre=rest)
             # Finally write the changes into database
-            post.save()
             imagen = encode_file(request.FILES['uploadFromPC'])
-            p = models.plato.objects.get(nombre=request.POST['nombre'])
-            p.restaurante = models.restaurante.objects.get(nombre=rest)
-            p.imagenMenu = imagen
-            p.save()
+            post.imagenMenu = imagen
+            post.save()
             # redirect it to some another page indicating data
             # was inserted successfully
-            return redirect('añadirPro', rest, p.nombre)
+            return redirect('añadirPro', rest, post.nombre)
 
         else:
 
@@ -180,7 +177,7 @@ def crearPla(request, rest):
 
 def editarPla (request,rest, plat):
   restau = models.restaurante.objects.filter(nombre=rest)
-  p = models.plato.objects.get(nombre=plat)
+  p = models.plato.objects.get(nombre=plat, restaurante=restau[0])
   if request.method == "POST":
      form = forms.platoForm(request.POST,instance=p)
      if form.is_valid():
@@ -202,7 +199,7 @@ def editarPro (request,rest, pro):
   restau = models.restaurante.objects.filter(nombre=rest)
   p = models.producto.objects.get(nombre=pro)
   if request.method == "POST":
-     form = models.productoForm(request.POST,instance=p)
+     form = forms.productoForm(request.POST,instance=p)
      if form.is_valid():
         p.nombre = request.POST['nombre']
         p.unidadMedida = request.POST['unidadMedida']

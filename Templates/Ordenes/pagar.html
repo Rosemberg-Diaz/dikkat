@@ -6,29 +6,25 @@
     <div class="container">
         <div class="section-content">
             <div class="row">
+				<div class="col-sm-5 img-bg d-flex shadow align-items-center justify-content-center justify-content-md-end img-2" style="background-image: url({% static 'img/hero-2.jpg' %});">
+
+                </div>
                 <div class="col-sm-7 py-5 pl-md-0 pl-4">
                     <div class="heading-section pl-lg-5 ml-md-5">
-                        <div class="row">
-                        <div class="col-sm-12">
-                            <span class="subheading">
-                            {{user.restaurante}}
+                        <span class="subheading">
+                            Dikkat
                         </span>
-                            <h2>
-                                Editar
-                            </h2>
-                            <h1>
-                                {{error}}
-                            </h1>
-                        </div>
-                        </div>
+                        <h2>
+                            Pagar {{ error }}
+                        </h2>
                     </div>
                     <div class="pl-lg-5 ml-md-5">
 
 						<form method="POST">
 							{% csrf_token %}
 							{{form.as_p}}
-							<button class="btn btn-default">
-								Enviar {% bs_icon 'arrow-up-right-circle-fill'%}
+							<button>
+								Iniciar sesion
 							</button>
 						</form>
 

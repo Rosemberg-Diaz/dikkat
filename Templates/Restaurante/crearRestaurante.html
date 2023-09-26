@@ -16,19 +16,19 @@
                         </h2>
                     </div>
                     <div class="pl-lg-5 ml-md-5">
-
-						<form method="POST" enctype="multipart/form-data">
-							{% csrf_token %}
-							{{form.as_p}}
-                            <div class="form-group">
-                                <label for="uploadFromPC">Imagen:</label>
-                                <input type="file" name="uploadFromPC" id="uploadFromPC" class="myButton" title="Upload From PC" value= "Upload from PC" onchange="uploadPC()" style="float:left;" required>
+                        <div class="container mt-8">
+                            <form method="POST"  enctype="multipart/form-data" class="custom-form">
+                                {% csrf_token %}
+                                {{form.as_div}}
+                                <div class="mb-3">
+                                    <label for="uploadFromPC" class="form-label">Selecciona una imagen para su logo:</label>
+                                    <input type="file" name="uploadFromPC" id="uploadFromPC" class="form-control" title="Upload From PC" value= "Upload from PC" onchange="uploadPC()" style="float:left;" required>
+                                </div>
+                                <button class="btn btn-primary m-5 w-50">
+                                    Enviar
+                                </button>
+                            </form>
                             </div>
-							<button>
-								Enviar
-							</button>
-						</form>
-
                     </div>
                 </div>
             </div>
