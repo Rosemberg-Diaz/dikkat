@@ -89,6 +89,7 @@ class orden(models.Model):
     mesa = models.PositiveIntegerField()
     cantidad = models.IntegerField(default=1)
     estado = models.BooleanField(default=True)
+    pagado = models.BooleanField(default=False)
     horaPedido = models.DateTimeField()
 
 class factura(models.Model):
@@ -98,7 +99,7 @@ class factura(models.Model):
         __empty__ = ('Seleccione')
     tipoPago = models.CharField(choices=pagos.choices,max_length=200)
     propina = models.FloatField(validators=[MinValueValidator(0.0)], default=0)
-    total = models.FloatField(validators=[MinValueValidator(0.0)])
+    total = models.FloatField(validators=[MinValueValidator(0.0)], default=0)
     email = models.EmailField()
     restaurante = models.ForeignKey(restaurante, on_delete=models.CASCADE, null=True, blank=True)
     identificatorOrder = models.CharField(choices=pagos.choices,max_length=200, default="x")

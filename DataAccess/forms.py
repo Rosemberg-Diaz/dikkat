@@ -117,15 +117,23 @@ class CorreoForm(forms.Form):
             field.widget.attrs['class'] = 'form-control ml-3 mb-4'
 
 class MesaForm(forms.Form):
+    correo = forms.EmailField(label='Correo Electrónico')
+
     def __init__(self, num_choices=3, *args, **kwargs):
         super(MesaForm, self).__init__(*args, **kwargs)
         self.fields['numero'] = forms.ChoiceField(
             choices=[(i, str(i)) for i in range(1, num_choices + 1)],
             label='Selecciona el numero de mesa en la que te encuentras'
         )
-        for field_name in ['numero']:
+        for field_name in ['numero','correo']:
             field = self.fields[field_name]
-            field.widget.attrs['class'] = 'form-control w-50 ml-3 mb-4'
+            field.widget.attrs['class'] = 'form-control w-100 ml-3 mb-4'
+class pagoForm(forms.Form):
+    METODO_PAGO_CHOICES = (
+        ('efectivo', 'Efectivo'),
+        ('datafono', 'Datafono'),
+    )
+    metodo_pago = forms.ChoiceField(choices=METODO_PAGO_CHOICES, widget=forms.Select(attrs={'class': 'form-select'}))
 
 class platoForm(forms.ModelForm):
 
