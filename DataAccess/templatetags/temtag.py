@@ -24,3 +24,7 @@ def indexImagen(indexable, i):
 @register.filter
 def index(indexable, i):
     return indexable[i]
+
+@register.filter
+def indexPagado(indexable, i):
+    return indexable[i].pagado

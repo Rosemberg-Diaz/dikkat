@@ -13,10 +13,21 @@
                 <h2>
                     Tu orden ya fue enviada a la cocina
                 </h2>
+                {% if request.user.is_authenticated %}
+                <a class="col-6" href="{% url 'entregarOrden' restaurante identificator %}" class="btn btn-default">Entregar {% bs_icon 'pencil'%}</a>
+                {% endif %}
                 {% else %}
                 <h2>
+                    {% if pagaCompleta %}
+                    Ya pagaste toda tu orden
+                    {% else %}
                     Tu orden ya fue entregada
-                    <a href="{% url 'CLS' restaurante %}" class="btn btn-danger" >Pagar</a>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
+                        Pagar orden completa
+                    </button>
+                    {% endif %}
+
+
                 </h2>
                 {% endif %}
             </div>
@@ -29,9 +40,30 @@
                     <div class="dishes-text">
                         <h3><span>{{especiales|indexNombre:dato}}</span><br></h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
-                        <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
+                        <h3 class="special-dishes-price">${{especiales|indexPrecio:dato}}</h3>
                         <h3 class="special-dishes-price">Cantidad: {{cantidades|index:dato}}</h3>
                     </div>
+                    {% if pagados|index:dato %}
+                        <p class="pt-3">Cancelado</p>
+                    {% else %}
+                        {% if request.user.is_authenticated %}
+                        {% if estado %}
+                        {% else %}
+                        <div class="modal-body">
+                                    <!-- Formulario -->
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="{{ form.metodo_pago.id_for_label }}" class="form-label">Método de Pago</label>
+                                            {{ form.metodo_pago }}
+                                        </div>
+                                         <a class="col-6" href="{% url 'pagarPlato' restaurante identificator especiales|indexNombre:dato %}" class="btn btn-default">Pagar plato {% bs_icon 'pencil'%}</a>
+                                    </form>
+                                </div>{% endif %}
+                        {% endif %}
+
+                    {% endif %}
+
                 </div>
                 <div class="col-lg-5 offset-lg-2 col-md-6 align-self-center mt-4 mt-md-0">
                     <img src="data:image/jpeg;base64,{{especiales|indexImagen:dato}}" alt="" class="img-fluid shadow w-100">
@@ -47,15 +79,59 @@
                     <div class="dishes-text">
                         <h3><span>{{especiales|indexNombre:dato}}</span><br> </h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
-                        <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
+                        <h3 class="special-dishes-price">${{especiales|indexPrecio:dato}}</h3>
                         <h3 class="special-dishes-price">Cantidad: {{cantidades|index:dato}}</h3>
                     </div>
+
+                    {% if pagados|index:dato %}
+                        <p class="pt-3">Cancelado</p>
+                    {% else %}
+                        {% if request.user.is_authenticated %}
+                        {% if estado %}
+                        {% else %}
+                                 <div class="modal-body">
+                                    <!-- Formulario -->
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="{{ form.metodo_pago.id_for_label }}" class="form-label">Método de Pago</label>
+                                            {{ form.metodo_pago }}
+                                        </div>
+                                         <a class="col-6" href="{% url 'pagarPlato' restaurante identificator especiales|indexNombre:dato %}" class="btn btn-default">Pagar plato {% bs_icon 'pencil'%}</a>
+                                    </form>
+                                </div>
+                               {% endif %}
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
             {% endfor %}
 
 
+        </div>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Mi Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.metodo_pago.id_for_label }}" class="form-label">Método de Pago</label>
+                            {{ form.metodo_pago }}
+                        </div>
+                        <a class="col-6" href="{% url 'pagarOrden' restaurante identificator %}" class="btn btn-default">Pagar {% bs_icon 'pencil'%}</a>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </section>{% endblock %}
