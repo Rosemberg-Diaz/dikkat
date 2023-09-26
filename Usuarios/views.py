@@ -46,7 +46,13 @@ def team(request, rest):
     return render(request, 'Usuarios/team.html', {'isLogin':False})
 
 def inicio(request):
-    return HttpResponse("Dikkkat")
+    rests = models.restaurante.objects.all()
+    context={
+        'restaurantes': rests,
+        'tamano': range(len(rests)),
+        'isLogin': True
+    }
+    return render(request, 'Restaurante/index.html', context)
 
 def salir(request, rest):
     logout(request)
