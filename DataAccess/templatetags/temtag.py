@@ -28,3 +28,7 @@ def index(indexable, i):
 @register.filter
 def indexPagado(indexable, i):
     return indexable[i].pagado
+
+@register.filter
+def indexLogo(indexable, i):
+    return indexable[i].logo
