@@ -10,7 +10,7 @@
                     Specialties
                 </span>
                 <h2>
-                    Special Dishes
+                    Platos especiales
                 </h2>
             </div>
             {% load index %}
@@ -23,7 +23,7 @@
                         <h3><span>{{especiales|indexNombre:dato}}</span><br></h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
                         <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
-                        <a href="#" class="btn-primary mt-3">book a table</a>
+                        <a href="{% url 'Tienda' restaurante %}" class="btn-primary mt-3">Pide uno <span><i class="fa fa-long-arrow-right"></i></span></a>
                     </div>
                 </div>
                 <div class="col-lg-5 offset-lg-2 col-md-6 align-self-center mt-4 mt-md-0">
@@ -41,7 +41,7 @@
                         <h3><span>{{especiales|indexNombre:dato}}</span><br> </h3>
                         <p class="pt-3">{{especiales|indexDes:dato}}</p>
                         <h3 class="special-dishes-price">{{especiales|indexPrecio:dato}}</h3>
-                        <a href="#" class="btn-primary mt-3">book a table <span><i class="fa fa-long-arrow-right"></i></span></a>
+                        <a href="{% url 'Tienda' restaurante %}" class="btn-primary mt-3">Pide uno <span><i class="fa fa-long-arrow-right"></i></span></a>
                     </div>
                 </div>
             </div>
