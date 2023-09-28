@@ -35,7 +35,6 @@ def tienda(request, rest):
             newOrden = models.factura(restaurante=restau[0], email=correo, identificatorOrder=fecha_hora_actual_str)
             newOrden.save()
             for plato in carrito.carrito:
-                print(plato)
                 plato_idSto = carrito.carrito[plato]["producto_id"]
                 cantidadSto = carrito.carrito[plato]["cantidad"]
                 acumuladoSto = carrito.carrito[plato]["acumulado"]
@@ -43,6 +42,18 @@ def tienda(request, rest):
                 platos.append(plato)
                 cantidades.append(cantidadSto)
                 total = total + (plato.precio * cantidadSto)
+                inventario = models.inventario.objects.filter(restaurante=restau[0], plato=plato)
+                print("Entro")
+                for inv in inventario:
+                    print(inv)
+                    if (inv.producto):
+                        producto = inv.producto
+                        nuevaDisponibilidad = producto.cantidadDisponible - inv.cantidadGastada
+                        if (nuevaDisponibilidad < 0):
+                            producto.cantidadDisponible = 0
+                        else:
+                            producto.cantidadDisponible = producto.cantidadDisponible - inv.cantidadGastada
+                        producto.save()
                 totalPlato.append(str(acumuladoSto))
                 newOrden = models.orden(restaurante=restau[0], plato=plato, mesa=numero, cantidad=cantidadSto,
                                         horaPedido=hora, identificator=fecha_hora_actual_str)
@@ -203,9 +214,7 @@ def entregarMesa(request, rest, mesa):
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(restaurante=restau[0], estado=True)
     for pla in orders:
-        print(pla.mesa)
         if pla.mesa == int(mesa):
-            print(pla)
             pla.estado = False
             pla.save()
 
@@ -217,7 +226,6 @@ def entregarOrden(request, rest, identificator):
     orders = models.orden.objects.filter(identificator=identificator)
     for pla in orders:
         if pla.identificator == identificator:
-            print(pla)
             pla.estado = False
             pla.save()
 
@@ -319,7 +327,9 @@ def crear_orden(request, rest):
                 cantidades.append(cantidadSto)
                 total = total + (plato.precio * cantidadSto)
                 inventario = models.inventario.objects.filter(restaurante=restau[0],plato=plato)
+                print("Entro")
                 for inv in inventario:
+                    print(inv)
                     if(inv.producto):
                         producto = inv.producto
                         nuevaDisponibilidad = producto.cantidadDisponible - inv.cantidadGastada
