@@ -1,6 +1,4 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -307,14 +305,12 @@ def crear_orden(request, rest):
     total = 0.0
     num_choices = restau[0].cantidadMesas  # Cambia este valor según tus necesidades
     if request.method == 'POST':
-
         form = forms.CorreoForm(num_choices, request.POST)
         if form.is_valid():
             # Procesa los datos del formulario aquí
             correo = form.cleaned_data['correo']
             numero = form.cleaned_data['numero']
             for plato in carrito.carrito:
-                print(plato)
                 plato_idSto = carrito.carrito[plato]["producto_id"]
                 cantidadSto = carrito.carrito[plato]["cantidad"]
                 acumuladoSto = carrito.carrito[plato]["acumulado"]
@@ -322,6 +318,16 @@ def crear_orden(request, rest):
                 platos.append(plato)
                 cantidades.append(cantidadSto)
                 total = total + (plato.precio * cantidadSto)
+                inventario = models.inventario.objects.filter(restaurante=restau[0],plato=plato)
+                for inv in inventario:
+                    if(inv.producto):
+                        producto = inv.producto
+                        nuevaDisponibilidad = producto.cantidadDisponible - inv.cantidadGastada
+                        if(nuevaDisponibilidad<0):
+                            producto.cantidadDisponible = 0
+                        else:
+                            producto.cantidadDisponible = producto.cantidadDisponible - inv.cantidadGastada
+                        producto.save()
                 totalPlato.append(str(acumuladoSto))
                 newOrden = models.orden(restaurante=restau[0], plato=plato, mesa=numero, cantidad=cantidadSto,
                                         horaPedido=hora, identificator=fecha_hora_actual_str)
@@ -348,9 +354,6 @@ def crear_orden(request, rest):
             subject = 'Asunto del correo'
             from_email = 'dikkatrc@gmail.com'
             recipient_list = [correo]
-
-            # Crea un objeto EmailMessage
-            email = EmailMessage(subject, strip_tags(html_content), from_email, recipient_list)
 
             # Crea un objeto EmailMultiAlternatives
             email = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)

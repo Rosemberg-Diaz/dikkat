@@ -114,6 +114,7 @@ def crearRest(request):
 
 def editarRest (request,rest):
   p = models.restaurante.objects.get(nombre=rest)
+  restau = models.restaurante.objects.filter(nombre=rest)
   if request.method == "POST":
      form = forms.restauranteForm(request.POST,instance=p)
      if form.is_valid():
@@ -124,7 +125,7 @@ def editarRest (request,rest):
         return redirect('inicio', p.nombre)
      else :
         form = forms.restauranteForm(instance=p)
-        return render(request, 'Restaurante/editarRestaurante.html', {'form': form})
+        return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin':True})
   else:
     form = forms.restauranteForm(instance=p)
-    return render(request, 'Restaurante/editarRestaurante.html', {'form': form})
+    return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin':True})
