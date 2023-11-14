@@ -3,7 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from .validators import numeroValido
 from django.contrib.auth.models import AbstractUser
 
-class Restaurante(models.Model):
+class restaurante(models.Model):
     """
     Modelo que representa un restaurante.
 
@@ -47,7 +47,7 @@ class Restaurante(models.Model):
     def __str__(self):
         return self.nombre
 
-class User(AbstractUser):
+class user(AbstractUser):
     """
     Modelo que extiende el modelo de usuario de Django con roles personalizados.
 
@@ -74,7 +74,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-class Producto(models.Model):
+class producto(models.Model):
     """
     Modelo que representa un producto.
 
@@ -112,7 +112,7 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-class Plato(models.Model):
+class plato(models.Model):
     """
     Modelo que representa un plato.
 
@@ -146,7 +146,7 @@ class Plato(models.Model):
     def __str__(self):
         return self.nombre
 
-class Inventario(models.Model):
+class inventario(models.Model):
     """
     Modelo que representa un registro de inventario.
 
@@ -162,7 +162,7 @@ class Inventario(models.Model):
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE, null=True, blank=True)
     cantidadGastada = models.FloatField(validators=[MinValueValidator(0.0)])
 
-class Orden(models.Model):
+class orden(models.Model):
     """
     Modelo que representa una orden.
 
@@ -186,7 +186,7 @@ class Orden(models.Model):
     pagado = models.BooleanField(default=False)
     horaPedido = models.DateTimeField()
 
-class Factura(models.Model):
+class factura(models.Model):
     """
     Modelo que representa una factura.
 
@@ -214,7 +214,7 @@ class Factura(models.Model):
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE, null=True, blank=True)
     identificatorOrder = models.CharField(choices=Pagos.choices, max_length=200, default="x")
 
-class ProductosFactura(models.Model):
+class productosFactura(models.Model):
     """
     Modelo que relaciona productos con facturas.
 
