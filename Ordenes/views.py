@@ -147,25 +147,38 @@ def enviar_confirmacion_por_correo(correo, restau, platos, cantidades, total, to
 
 
 def orderDetails(request, rest, identificator):
+    """
+    Muestra los detalles de un pedido específico en un restaurante.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        identificator: str, el identificador único del pedido.
+
+    Returns:
+        HttpResponse: Renderiza la página de detalles del pedido con el contexto apropiado.
+    """
+
+    # Obtener el restaurante y las órdenes asociadas con el identificador
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(identificator=identificator)
-    platos = []
-    cantidades = []
-    pagados = []
-    form = forms.pagoForm(request.POST)
-    pagaCompleta = False
+
+    # Preparar listas para platos, cantidades y estado de pago
+    platos, cantidades, pagados = [], [], []
     for order in orders:
         platos.append(order.plato)
         cantidades.append(order.cantidad)
         pagados.append(order.pagado)
-    if all(valor == True for valor in pagados):
-        pagaCompleta = True
-    else:
-        pagaCompleta = False
 
+    # Determinar si la orden ha sido completamente pagada
+    pagaCompleta = all(pagados)
+
+    # Preparar otros elementos del contexto
     inven = models.inventario.objects.all()
-    estaciones = []
-    tamano = range(len(orders))
+    estaciones = []  # Aquí puedes agregar lógica para determinar estaciones si es necesario
+    tamano = len(orders)
+
+    # Configurar el contexto para la plantilla
     context = {
         'restaurante': restau[0],
         'estaciones': estaciones,
@@ -174,75 +187,95 @@ def orderDetails(request, rest, identificator):
         'cantidades': cantidades,
         'pagados': pagados,
         'tamano': tamano,
-        'estado': orders[0].estado,
+        'estado': orders[0].estado if orders else None,
         'identificator': identificator,
         'pagaCompleta': pagaCompleta,
-        'form': form
+        'form': forms.pagoForm(request.POST) if request.method == 'POST' else forms.pagoForm()
     }
+
     return render(request, 'Ordenes/orderDetails.html', context)
 
 
 def ordenes(request, rest):
+    """
+    Muestra las órdenes activas de un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante para filtrar las órdenes.
+
+    Returns:
+        HttpResponse: Una página renderizada con los detalles de las órdenes del restaurante.
+    """
+
+    # Obtener el restaurante y las órdenes activas
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(restaurante=restau[0], estado=True)
-    ordenes = []
-    mesas = []
-    form = forms.pagoForm(request.POST)
-    for pla in orders:
-        if pla.mesa not in mesas:
-            mesas.append(pla.mesa)
 
-    if orders:
-        context = {
-            'restaurante': restau[0],
-            'ordenes': orders,
-            'mesas': mesas,
-            'estado': orders[0].estado,
-            'isPay':False,
-            'form':form
-        }
-    else:
-        context = {
-            'restaurante': restau[0],
-            'ordenes': orders,
-            'mesas': mesas,
-            'isPay':False,
-            'form':form
-        }
+    # Recolectar mesas únicas de las órdenes
+    mesas = list(set(order.mesa for order in orders))
+
+    # Preparar el formulario, se asume que es necesario solo para solicitudes POST
+    form = forms.pagoForm(request.POST) if request.method == 'POST' else forms.pagoForm()
+
+    # Configurar el contexto para la plantilla
+    context = {
+        'restaurante': restau[0],
+        'ordenes': orders,
+        'mesas': mesas,
+        'isPay': False,  # Asumiendo que 'isPay' se refiere a si se ha realizado un pago
+        'form': form
+    }
+
     return render(request, 'Ordenes/ordenes.html', context)
 
 
 def ordenesPagar(request, rest):
+    """
+    Muestra las órdenes que están pendientes de pago en un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante para filtrar las órdenes.
+
+    Returns:
+        HttpResponse: Una página renderizada con los detalles de las órdenes pendientes de pago del restaurante.
+    """
+
+    # Obtener el restaurante y las órdenes pendientes de pago
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(restaurante=restau[0], pagado=False, estado=False)
-    ordenes = []
-    mesas = []
-    form = forms.pagoForm(request.POST)
-    for pla in orders:
-        if pla.mesa not in mesas:
-            mesas.append(pla.mesa)
 
-    if orders:
-        context = {
-            'restaurante': restau[0],
-            'ordenes': orders,
-            'mesas': mesas,
-            'estado': orders[0].estado,
-            'isPay':True,
-            'form':form
-        }
-    else:
-        context = {
-            'restaurante': restau[0],
-            'ordenes': orders,
-            'mesas': mesas,
-            'isPay':True,
-            'form':form
-        }
+    # Recolectar mesas únicas de las órdenes
+    mesas = list(set(order.mesa for order in orders))
+
+    # Preparar el formulario, se asume que es necesario solo para solicitudes POST
+    form = forms.pagoForm(request.POST) if request.method == 'POST' else forms.pagoForm()
+
+    # Configurar el contexto para la plantilla
+    context = {
+        'restaurante': restau[0],
+        'ordenes': orders,
+        'mesas': mesas,
+        'isPay': True,  # Indica que la página está relacionada con el proceso de pago
+        'form': form
+    }
+
     return render(request, 'Ordenes/ordenes.html', context)
 
 
 def entregarMesa(request, rest, mesa):
+    """
+    Marca todas las órdenes en una mesa específica como entregadas.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        mesa: str, el número de la mesa.
+
+    Returns:
+        HttpResponse: Redirección a la página de órdenes del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(restaurante=restau[0], estado=True)
     for pla in orders:
@@ -254,6 +287,17 @@ def entregarMesa(request, rest, mesa):
 
 
 def entregarOrden(request, rest, identificator):
+    """
+    Marca toda la órden como entregadas.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        mesa: str, el número de la mesa.
+
+    Returns:
+        HttpResponse: Redirección a la página de órdenes del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(identificator=identificator)
     for pla in orders:
@@ -264,6 +308,18 @@ def entregarOrden(request, rest, identificator):
     return redirect('Ordenes', rest)
 
 def pagarPlato(request, rest, identificator, plato):
+     """
+    Marca un plato específico en una orden como pagado.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        identificator: str, el identificador de la orden.
+        plato: str, el nombre del plato.
+
+    Returns:
+        HttpResponse: Redirección a la página de detalles de la orden.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     plat = models.plato.objects.get(nombre=plato, restaurante=restau[0])
     orders = models.orden.objects.filter(identificator=identificator, plato=plat)
@@ -275,6 +331,17 @@ def pagarPlato(request, rest, identificator, plato):
     return redirect('OrderDetails', rest, identificator)
 
 def pagarOrden(request, rest, identificator):
+    """
+    Marca todas las órdenes con un identificador específico como pagadas.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        identificator: str, el identificador de la orden.
+
+    Returns:
+        HttpResponse: Redirección a la página de detalles de la orden.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(identificator=identificator)
     for pla in orders:
@@ -286,6 +353,17 @@ def pagarOrden(request, rest, identificator):
 
 
 def pagarMesa(request, rest, mesa):
+    """
+    Marca todas las órdenes en una mesa específica como pagadas.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        mesa: str, el número de la mesa.
+
+    Returns:
+        HttpResponse: Redirección a la página de órdenes pendientes de pago.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     orders = models.orden.objects.filter(restaurante=restau[0], estado=False)
     for pla in orders:
@@ -297,6 +375,17 @@ def pagarMesa(request, rest, mesa):
 
 
 def agregar_producto(request, rest, producto_id):
+    """
+    Agrega un producto al carrito de compras.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        producto_id: int, el identificador del producto a agregar.
+
+    Returns:
+        HttpResponse: Redirección a la tienda del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     carrito = Carrito(request)
     producto = models.plato.objects.get(id=producto_id)
@@ -305,6 +394,17 @@ def agregar_producto(request, rest, producto_id):
 
 
 def eliminar_producto(request, rest, producto_id):
+    """
+    Elimina un producto al carrito de compras.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        producto_id: int, el identificador del producto a agregar.
+
+    Returns:
+        HttpResponse: Redirección a la tienda del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     carrito = Carrito(request)
     producto = models.plato.objects.get(id=producto_id)
@@ -313,6 +413,17 @@ def eliminar_producto(request, rest, producto_id):
 
 
 def restar_producto(request, rest, producto_id):
+    """
+    Resta la cantidad pedida un producto al carrito de compras.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        producto_id: int, el identificador del producto a agregar.
+
+    Returns:
+        HttpResponse: Redirección a la tienda del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     carrito = Carrito(request)
     producto = models.plato.objects.get(id=producto_id)
@@ -321,6 +432,17 @@ def restar_producto(request, rest, producto_id):
 
 
 def limpiar_carrito(request, rest):
+    """
+    Limpia al carrito de compras.
+
+    Args:
+        request: HttpRequest, la solicitud HTTP.
+        rest: str, el nombre del restaurante.
+        producto_id: int, el identificador del producto a agregar.
+
+    Returns:
+        HttpResponse: Redirección a la tienda del restaurante.
+    """
     restau = models.restaurante.objects.filter(nombre=rest)
     carrito = Carrito(request)
     carrito.limpiar()
