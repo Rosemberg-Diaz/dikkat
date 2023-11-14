@@ -3,12 +3,31 @@ from DataAccess import forms, models
 import base64
 
 def encode_file(nombre):
+    """
+        Codifica el contenido de un archivo en una cadena base64.
+
+        Args:
+            file_object: Un objeto de archivo que será leído y codificado.
+
+        Returns:
+            str: Una cadena de texto que representa el contenido del archivo en formato base64.
+        """
     image_read = nombre.read()
     encoded_bytes = base64.b64encode(image_read)
     encoded_string = encoded_bytes.decode('utf-8')
     return (encoded_string)
 
 def products(request, rest):
+    """
+        Muestra los productos disponibles en un restaurante específico.
+
+        Args:
+            request: HttpRequest que contiene los datos de la solicitud.
+            rest: Nombre del restaurante para filtrar los productos.
+
+        Returns:
+            HttpResponse: Una página renderizada con los productos del restaurante.
+        """
     restau = models.restaurante.objects.filter(nombre=rest)
     productos = models.producto.objects.filter(restaurante=restau[0])
 
@@ -20,6 +39,17 @@ def products(request, rest):
 
 
 def proByPla(request, rest, pla):
+    """
+        Maneja la visualización y gestión de productos asociados a un plato específico en un restaurante.
+
+        Args:
+            request: HttpRequest que contiene los datos de la solicitud.
+            rest: Nombre del restaurante.
+            pla: Nombre del plato.
+
+        Returns:
+            HttpResponse: Una página renderizada con productos asociados al plato o una redirección tras una acción exitosa.
+        """
     restau = models.restaurante.objects.filter(nombre=rest)
     products = models.producto.objects.filter(restaurante=restau[0])
     plat = models.plato.objects.filter(nombre=pla)
@@ -27,17 +57,8 @@ def proByPla(request, rest, pla):
     if len(products) == 0:
         products = 0
     if request.method == 'POST':
-        # Pass the form data to the form class
         details = forms.productPlatoForm(request.POST)
-
-        # In the 'form' class the clean function
-        # is defined, if all the data is correct
-        # as per the clean function, it returns true
         if details.is_valid():
-
-            # Temporarily make an object to be add some
-            # logic into the data if there is such a need
-            # before writing to the database
             post = details.save(commit=False)
             # Finally write the changes into database
             post.save()
@@ -47,10 +68,7 @@ def proByPla(request, rest, pla):
             p.restaurante = restau[0]
             p.plato = plat[0]
             p.save()
-            # redirect it to some another page indicating data
-            # was inserted successfully
             return redirect('añadirPro', rest, pla)
-
         else:
             if len(inv) > 0:
                 context = {
@@ -96,122 +114,127 @@ def proByPla(request, rest, pla):
         return render(request, 'Platos/productosByPlatos.html', context)
 
 def crearPro(request, rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    # check if the request is post
+    """
+    Gestiona la creación de un nuevo producto para un restaurante específico.
+    Muestra un formulario para añadir un producto y procesa la información enviada.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante para el cual se crea el producto.
+
+    Returns:
+        HttpResponse: Renderiza la página del formulario o redirige tras una acción exitosa.
+    """
+
+    # Obtener el restaurante por su nombre
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
     if request.method == 'POST':
-        # Pass the form data to the form class
         details = forms.productoForm(request.POST)
 
-        # In the 'form' class the clean function
-        # is defined, if all the data is correct
-        # as per the clean function, it returns true
         if details.is_valid():
-
-            # Temporarily make an object to be add some
-            # logic into the data if there is such a need
-            # before writing to the database
             post = details.save(commit=False)
-            # Finally write the changes into database
-            post.restaurante = models.restaurante.objects.get(nombre=rest)
-            imagen = encode_file(request.FILES['uploadFromPC'])
-            post.imagenInv = imagen
+            post.restaurante = restau
+            # Llamada a la función para codificar la imagen
+            if 'uploadFromPC' in request.FILES:
+                imagen = encode_file(request.FILES['uploadFromPC'])
+                post.imagenInv = imagen
             post.save()
-            # redirect it to some another page indicating data
-            # was inserted successfully
             return redirect('productos', rest)
-
         else:
+            return render(request, "Platos/crearProducto.html", {'form': details, 'restaurante': restau})
 
-            # Redirect back to the same page if the data
-            # was invalid
-            return render(request, "Platos/crearProducto.html", {'form': details,  'restaurante': restau[0]})
     else:
-
-        # If the request is a GET request then,
-        # create an empty form object and
-        # render it into the page
-        form = forms.productoForm(None)
-        return render(request, 'Platos/crearProducto.html', {'form': form,  'restaurante': restau[0]})
+        form = forms.productoForm()
+        return render(request, 'Platos/crearProducto.html', {'form': form, 'restaurante': restau})
 
 def crearPla(request, rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    context = {
-        'restaurante': restau[0],
-    }
-    # check if the request is post
-    if request.method == 'POST':
+    """
+    Gestiona la creación de un nuevo plato para un restaurante específico.
+    Muestra un formulario para añadir un plato y procesa la información enviada.
 
-        # Pass the form data to the form class
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante para el cual se crea el plato.
+
+    Returns:
+        HttpResponse: Renderiza la página del formulario o redirige tras una acción exitosa.
+    """
+
+    # Obtener el restaurante por su nombre
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
+    if request.method == 'POST':
         details = forms.platoForm(request.POST)
 
-        # In the 'form' class the clean function
-        # is defined, if all the data is correct
-        # as per the clean function, it returns true
         if details.is_valid():
-
-            # Temporarily make an object to be add some
-            # logic into the data if there is such a need
-            # before writing to the database
             post = details.save(commit=False)
-            post.restaurante = models.restaurante.objects.get(nombre=rest)
-            # Finally write the changes into database
-            imagen = encode_file(request.FILES['uploadFromPC'])
-            post.imagenMenu = imagen
+            post.restaurante = restau
+            # Llamada a la función para codificar la imagen
+            if 'uploadFromPC' in request.FILES:
+                imagen = encode_file(request.FILES['uploadFromPC'])
+                post.imagenMenu = imagen
             post.save()
-            # redirect it to some another page indicating data
-            # was inserted successfully
             return redirect('añadirPro', rest, post.nombre)
-
         else:
+            return render(request, "Platos/crearPlato.html", {'form': details, 'restaurante': restau})
 
-            # Redirect back to the same page if the data
-            # was invalid
-            return render(request, "Platos/crearPlato.html", {'form': details,  'restaurante': restau[0]})
     else:
+        form = forms.platoForm()
+        return render(request, 'Platos/crearPlato.html', {'form': form, 'restaurante': restau})
 
-        # If the request is a GET request then,
-        # create an empty form object and
-        # render it into the page
-        form = forms.platoForm(None)
-        return render(request, 'Platos/crearPlato.html', {'form': form,  'restaurante': restau[0]})
+def editarPla(request, rest, plat):
+    """
+    Permite editar un plato en un restaurante específico.
 
-def editarPla (request,rest, plat):
-  restau = models.restaurante.objects.filter(nombre=rest)
-  p = models.plato.objects.get(nombre=plat, restaurante=restau[0])
-  if request.method == "POST":
-     form = forms.platoForm(request.POST,instance=p)
-     if form.is_valid():
-        p.nombre = request.POST['nombre']
-        p.descripcion = request.POST['descripcion']
-        p.estacion = request.POST['estacion']
-        p.precio = request.POST['precio']
-        p.restaurante = models.restaurante.objects.get(nombre=rest)
-        p.save()
-        return redirect('añadirPro', rest, p.nombre)
-     else :
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+        plat: Nombre del plato a editar.
+
+    Returns:
+        HttpResponse: Renderiza la página de edición del plato o redirige tras guardar los cambios.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+    p = models.plato.objects.get(nombre=plat, restaurante=restau)
+
+    if request.method == "POST":
+        form = forms.platoForm(request.POST, instance=p)
+        if form.is_valid():
+            form.save()
+            return redirect('añadirPro', rest, p.nombre)
+        else:
+            # Si el formulario no es válido, renderizar de nuevo la página con el formulario y errores
+            return render(request, 'Platos/editarPlato.html', {'form': form, 'restaurante': restau})
+    else:
+        # En caso de una solicitud GET, mostrar el formulario con la instancia del plato actual
         form = forms.platoForm(instance=p)
-        return render(request, 'Platos/editarPlato.html', {'form': form,  'restaurante': restau[0]})
-  else:
-    form = forms.platoForm(instance=p)
-    return render(request, 'Platos/editarPlato.html', {'form': form,  'restaurante': restau[0]})
+        return render(request, 'Platos/editarPlato.html', {'form': form, 'restaurante': restau})
 
-def editarPro (request,rest, pro):
-  restau = models.restaurante.objects.filter(nombre=rest)
-  p = models.producto.objects.get(nombre=pro)
-  if request.method == "POST":
-     form = forms.productoForm(request.POST,instance=p)
-     if form.is_valid():
-        p.nombre = request.POST['nombre']
-        p.unidadMedida = request.POST['unidadMedida']
-        p.precio = request.POST['precio']
-        p.estado = request.POST['estado']
-        p.cantidadDisponible = request.POST['cantidadDisponible']
-        p.restaurante = models.restaurante.objects.get(nombre=rest)
-        p.save()
-        return redirect('productos', rest)
-     else :
+def editarPro(request, rest, pro):
+    """
+    Permite editar un producto en un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+        pro: Nombre del producto a editar.
+
+    Returns:
+        HttpResponse: Renderiza la página de edición del producto o redirige tras guardar los cambios.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+    p = models.producto.objects.get(nombre=pro, restaurante=restau)
+
+    if request.method == "POST":
+        form = forms.productoForm(request.POST, instance=p)
+        if form.is_valid():
+            form.save()
+            return redirect('productos', rest)
+        else:
+            # Si el formulario no es válido, renderizar de nuevo la página con el formulario y errores
+            return render(request, 'Platos/editarProducto.html', {'form': form, 'restaurante': restau})
+    else:
+        # En caso de una solicitud GET, mostrar el formulario con la instancia del producto actual
         form = forms.productoForm(instance=p)
-        return render(request, 'Platos/editarProducto.html', {'form': form,  'restaurante': restau[0]})
-  else:
-    form = forms.productoForm(instance=p)
-    return render(request, 'Platos/editarProducto.html', {'form': form,  'restaurante': restau[0]})
+        return render(request, 'Platos/editarProducto.html', {'form': form, 'restaurante': restau})

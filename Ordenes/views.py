@@ -308,7 +308,7 @@ def entregarOrden(request, rest, identificator):
     return redirect('Ordenes', rest)
 
 def pagarPlato(request, rest, identificator, plato):
-     """
+    """
     Marca un plato específico en una orden como pagado.
 
     Args:
