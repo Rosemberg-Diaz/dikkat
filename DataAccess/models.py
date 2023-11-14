@@ -74,6 +74,7 @@ class user(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class producto(models.Model):
     """
     Modelo que representa un producto.
@@ -112,6 +113,7 @@ class producto(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class plato(models.Model):
     """
     Modelo que representa un plato.
@@ -146,6 +148,7 @@ class plato(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class inventario(models.Model):
     """
     Modelo que representa un registro de inventario.
@@ -161,6 +164,7 @@ class inventario(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=True)
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE, null=True, blank=True)
     cantidadGastada = models.FloatField(validators=[MinValueValidator(0.0)])
+
 
 class orden(models.Model):
     """
@@ -185,6 +189,7 @@ class orden(models.Model):
     estado = models.BooleanField(default=True)
     pagado = models.BooleanField(default=False)
     horaPedido = models.DateTimeField()
+
 
 class factura(models.Model):
     """
@@ -213,6 +218,8 @@ class factura(models.Model):
     email = models.EmailField()
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE, null=True, blank=True)
     identificatorOrder = models.CharField(choices=Pagos.choices, max_length=200, default="x")
+
+
 
 class productosFactura(models.Model):
     """
