@@ -5,24 +5,38 @@ from django.contrib.auth import login, logout, authenticate
 
 # Create your views here.
 def loginView(request):
+    """
+    Maneja el proceso de inicio de sesión de los usuarios.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+
+    Returns:
+        HttpResponse: Renderiza la página de inicio de sesión o redirige tras un inicio de sesión exitoso.
+    """
     if request.method == 'GET':
-        return render(request, 'Usuarios/login.html',{
-            'form': AuthenticationForm,
-            'isLogin': True
-        })
+        return render(request, 'Usuarios/login.html', {'form': AuthenticationForm(), 'isLogin': True})
     else:
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'Usuarios/login.html', {
-                'form': AuthenticationForm,
-                'error': "Usuario o contraseña incorrecta",
-                'isLogin': True
-            })
-        else:
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            return redirect('inicio', user.restaurante)
+            # Redirige a una página predeterminada después del inicio de sesión
+            return redirect('inicio')
+        else:
+            return render(request, 'Usuarios/login.html', {'form': form, 'error': "Usuario o contraseña incorrecta", 'isLogin': True})
 
 def register(request, rest):
+    """
+        Maneja el registro de nuevos usuarios para un restaurante específico.
+
+        Args:
+            request: HttpRequest que contiene los datos de la solicitud.
+            rest: Identificador del restaurante.
+
+        Returns:
+            HttpResponse: Renderiza la página de registro o redirige tras un registro exitoso.
+        """
     if request.method == 'GET':
         return render(request, 'Usuarios/register.html',{
             'form': forms.CreateUserForm,
@@ -46,6 +60,15 @@ def team(request, rest):
     return render(request, 'Usuarios/team.html', {'isLogin':False})
 
 def inicio(request):
+    """
+       Muestra la página principal de la aplicación con una lista de todos los restaurantes.
+
+       Args:
+           request: HttpRequest que contiene los datos de la solicitud.
+
+       Returns:
+           HttpResponse: Renderiza la página principal con la lista de restaurantes.
+       """
     rests = models.restaurante.objects.all()
     context={
         'restaurantes': rests,

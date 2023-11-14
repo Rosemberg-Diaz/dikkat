@@ -9,123 +9,180 @@ def encode_file(nombre):
     encoded_string = encoded_bytes.decode('utf-8')
     return (encoded_string)
 
-def dikkat(request,rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    especials = models.plato.objects.filter(restaurante=restau[0], especial=True)
-    if len(restau) > 0:
+def dikkat(request, rest):
+    """
+    Muestra información sobre un restaurante específico, incluyendo sus platos especiales.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+
+    Returns:
+        HttpResponse: Renderiza la página con información sobre el restaurante.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
+    if restau:
+        especials = models.plato.objects.filter(restaurante=restau, especial=True)
         context = {
-            'restaurante': restau[0],
+            'restaurante': restau,
             'especiales': especials
         }
     else:
-        context = {
-            'error': 'No se encuentra el restaurante'
-        }
-    return render(request, 'Restaurante/about.html',context)
+        context = {'error': 'No se encuentra el restaurante'}
+
+    return render(request, 'Restaurante/about.html', context)
 
 def restauranteView(request, rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    context = {
-        'restaurante': restau[0],
-    }
-    return render(request, 'Restaurante/index.html',context)
+    """
+    Muestra la página principal de un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+
+    Returns:
+        HttpResponse: Renderiza la página principal del restaurante.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
+    if restau:
+        context = {'restaurante': restau}
+    else:
+        context = {'error': 'No se encuentra el restaurante'}
+
+    return render(request, 'Restaurante/index.html', context)
 
 def menu(request, rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    platos = models.plato.objects.filter(restaurante=restau[0])
-    estaciones = []
+    """
+    Muestra el menú de un restaurante específico, agrupando los platos por estaciones.
 
-    for pla in platos:
-        if pla.estacion not in estaciones:
-            estaciones.append(pla.estacion)
-    context = {
-        'restaurante': restau[0],
-        'estaciones': estaciones,
-        'platos': platos
-    }
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+
+    Returns:
+        HttpResponse: Renderiza la página del menú del restaurante.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
+    if restau:
+        platos = models.plato.objects.filter(restaurante=restau)
+
+        # Generar lista de estaciones únicas
+        estaciones = list({pla.estacion for pla in platos})
+
+        context = {
+            'restaurante': restau,
+            'estaciones': estaciones,
+            'platos': platos
+        }
+    else:
+        context = {'error': 'No se encuentra el restaurante'}
+
     return render(request, 'Restaurante/menu.html', context)
 
 def especiales(request, rest):
-    restau = models.restaurante.objects.filter(nombre=rest)
-    especials = models.plato.objects.filter(restaurante=restau[0], especial=True)
-    ids = []
-    idx = []
-    tipoFront = 1
-    cont = 0
-    if len(restau) > 0:
-        for i in especials:
-            idx.append(cont)
-            cont+=1
-            ids.append(tipoFront)
-            if tipoFront<=2:
-                tipoFront = tipoFront + 1
-            else:
-                tipoFront = 1
-        print(idx)
+    """
+    Muestra los platos especiales de un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante.
+
+    Returns:
+        HttpResponse: Renderiza la página con los platos especiales del restaurante o un mensaje de error.
+    """
+    restau = models.restaurante.objects.filter(nombre=rest).first()
+
+    if restau:
+        especials = models.plato.objects.filter(restaurante=restau, especial=True)
+
+        # Generación de índices e ids para el front-end
+        ids, idx = generar_indices(len(especials))
+
         context = {
-            'restaurante': restau[0],
+            'restaurante': restau,
             'ids': ids,
             'especiales': especials,
             'tamano': idx
         }
     else:
-        context = {
-            'error': 'No se encuentra el restaurante'
-        }
+        context = {'error': 'No se encuentra el restaurante'}
+
     return render(request, 'Restaurante/special-dishes.html', context)
 
+def generar_indices(num_especiales):
+    """
+    Genera listas de índices e ids para los platos especiales.
+
+    Args:
+        num_especiales: Número de platos especiales.
+
+    Returns:
+        tuple: Dos listas, una de ids y otra de índices.
+    """
+    tipoFront = 1
+    ids = []
+    idx = list(range(num_especiales))
+
+    for _ in idx:
+        ids.append(tipoFront)
+        tipoFront = 1 if tipoFront == 3 else tipoFront + 1
+
+    return ids, idx
+
 def crearRest(request):
-    # check if the request is post
+    """
+    Gestiona la creación de un nuevo restaurante.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+
+    Returns:
+        HttpResponse: Renderiza la página de creación del restaurante o redirige tras crear el restaurante.
+    """
     if request.method == 'POST':
+        form = forms.restauranteForm(request.POST, request.FILES)
 
-        # Pass the form data to the form class
-        details = forms.restauranteForm(request.POST,request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
 
-        # In the 'form' class the clean function
-        # is defined, if all the data is correct
-        # as per the clean function, it returns true
-        if details.is_valid():
+            # Verificar si se ha subido una imagen y codificarla
+            if 'uploadFromPC' in request.FILES:
+                imagen = encode_file(request.FILES['uploadFromPC'])
+                post.logo = imagen
 
-            # Temporarily make an object to be add some
-            # logic into the data if there is such a need
-            # before writing to the database
-            post = details.save(commit=False)
-            imagen = encode_file(request.FILES['uploadFromPC'])
-            # Finally write the changes into database
             post.save()
-            p = models.restaurante.objects.get(nombre=request.POST['nombre'])
-            p.logo = imagen
-            p.save()
-            # redirect it to some another page indicating data
-            # was inserted successfully
-            return redirect('inicio', p.nombre)
-
+            return redirect('inicio', post.nombre)
         else:
-
-            # Redirect back to the same page if the data
-            # was invalid
-            return render(request, "Restaurante/crearRestaurante.html", {'form': details, 'isLogin':True})
+            return render(request, "Restaurante/crearRestaurante.html", {'form': form, 'isLogin': True})
     else:
-        # If the request is a GET request then,
-        # create an empty form object and
-        # render it into the page
-        form = forms.restauranteForm(None)
-        return render(request, 'Restaurante/crearRestaurante.html', {'form': form, 'isLogin':True})
+        form = forms.restauranteForm()
+        return render(request, 'Restaurante/crearRestaurante.html', {'form': form, 'isLogin': True})
 
-def editarRest (request,rest):
-  p = models.restaurante.objects.get(nombre=rest)
-  restau = models.restaurante.objects.filter(nombre=rest)
-  if request.method == "POST":
-     form = forms.restauranteForm(request.POST,instance=p)
-     if form.is_valid():
-        p.nombre = request.POST['nombre']
-        p.descripcion = request.POST['descripcion']
-        p.telefono = request.POST['telefono']
-        p.save()
-        return redirect('inicio', p.nombre)
-     else :
+def editarRest(request, rest):
+    """
+    Permite editar los detalles de un restaurante específico.
+
+    Args:
+        request: HttpRequest que contiene los datos de la solicitud.
+        rest: Nombre del restaurante a editar.
+
+    Returns:
+        HttpResponse: Renderiza la página de edición del restaurante o redirige tras guardar los cambios.
+    """
+    p = models.restaurante.objects.get(nombre=rest)
+
+    if request.method == "POST":
+        form = forms.restauranteForm(request.POST, instance=p)
+        if form.is_valid():
+            form.save()
+            return redirect('inicio', p.nombre)
+        else:
+            # Si el formulario no es válido, renderizar de nuevo la página con el formulario y errores
+            return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin': True})
+    else:
+        # En caso de una solicitud GET, mostrar el formulario con la instancia del restaurante actual
         form = forms.restauranteForm(instance=p)
-        return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin':True})
-  else:
-    form = forms.restauranteForm(instance=p)
-    return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin':True})
+        return render(request, 'Restaurante/editarRestaurante.html', {'form': form, 'isLogin': True})
